@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
-public class HttpRequestResult {
+public class HttpRequestResult  {
     private final HttpMessage response;
     private final int status;
     private final String reasonPhrase;
