@@ -56,4 +56,9 @@ public class HttpMessage {
     public String getStartLine() {
         return startLine;
     }
+
+    public int getResponseCode() {
+        int code = Integer.parseInt(startLine.split(" ")[1]);
+        return code;
+    }
 }

@@ -5,33 +5,26 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
 public class HttpRequestResult  {
-    private final HttpMessage response;
-    private final int status;
-    private final String reasonPhrase;
+    private  HttpMessage response;
+
+    private final String host;
+    private final int port;
+    private final String requestTarget;
 
 
     public HttpRequestResult(String host, int port, String requestTarget) throws IOException {
-        var socket = new Socket(host, port);
-        String req = "GET " + requestTarget + " HTTP/1.1\r\n" +
-                "Connection: close\r\n" +
-                "Host: " + host + "\r\n" +
-                "\r\n";
-        socket.getOutputStream().write(
-                (req.getBytes(StandardCharsets.UTF_8))
-        );
-        response = new HttpMessage(socket.getInputStream());
-        String[] responseStatusLine = response.getStartLine().split(" ",3);
-        status = Integer.parseInt(responseStatusLine[1]);
-        reasonPhrase = responseStatusLine[2];
+        System.out.println("host: "+ host);
+        System.out.println("port: " +port);
+        this.host = host;
+        this.port = port;
+        this.requestTarget = requestTarget;
 
     }
 
     public String getHeader(String HeaderName) {
         return  response.getHeader(HeaderName);
     }
-    public int getStatus(){
-        return status;
-    }
+
     public int getContentLength() {
         return response.contentLength;
     }
@@ -40,9 +33,18 @@ public class HttpRequestResult  {
 
         return response.body;
     }
-    public static void main(String[] args) throws IOException {
-        var client = new HttpRequestResult("127.0.0.1", 9000, "/test");
-        System.out.println(client.status);
-        System.out.println(client.getBody());
+
+
+    public HttpMessage executeRequest() throws IOException {
+        var socket = new Socket(host, port);
+        String req = "GET " + requestTarget + " HTTP/1.1\r\n" +
+                "Host: " + host + "\r\n" +
+                "\r\n";
+        socket.getOutputStream().write(
+                (req.getBytes(StandardCharsets.UTF_8))
+        );
+        response = new HttpMessage(socket.getInputStream());
+        return response;
+
     }
 }

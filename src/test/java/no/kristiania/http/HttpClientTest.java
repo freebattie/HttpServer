@@ -12,33 +12,38 @@ public class HttpClientTest {
     @Test
     void shouldReadStatusCode() throws IOException {
         var client = new HttpRequestResult("httpbin.org", 80, "/html");
-        assertEquals(200, client.getStatus());
+        HttpMessage response = client.executeRequest();
+        assertEquals(200, response.getResponseCode());
     }
 
     @Test
     void shouldReadNotFoundStatusCode() throws IOException {
         var client = new HttpRequestResult("httpbin.org", 80, "/bullshit");
-        assertEquals(404, client.getStatus());
+        HttpMessage response = client.executeRequest();
+        assertEquals(404, response.getResponseCode());
     }
 
     @Test
     void shouldReadHttpResponseHeader() throws IOException {
         var client = new HttpRequestResult("httpbin.org", 80, "/html");
-        assertEquals("text/html; charset=utf-8", client.getHeader("Content-Type"));
-        assertEquals("text/html; charset=utf-8", client.getHeader("CONTENT-TYPE"));
-        assertEquals("close", client.getHeader("Connection"));
+        HttpMessage response = client.executeRequest();
+        assertEquals("text/html; charset=utf-8", response.getHeader("Content-Type"));
+        assertEquals("text/html; charset=utf-8", response.getHeader("CONTENT-TYPE"));
+        assertEquals("close", response.getHeader("Connection"));
     }
 
     @Test
     void shouldReadContentLength() throws IOException {
         var client = new HttpRequestResult("httpbin.org", 80, "/html");
-        assertEquals("3741", client.getHeader("Content-length"));
+        HttpMessage response = client.executeRequest();
+        assertEquals("3741", response.getHeader("Content-length"));
         assertEquals(3741, client.getContentLength());
     }
 
     @Test
     void shouldReadResponseBody() throws IOException {
         var client = new HttpRequestResult("httpbin.org", 80, "/html");
+        HttpMessage response = client.executeRequest();
         String body = client.getBody();
         assertTrue(body.startsWith("<!DOCTYPE html>"));
         assertTrue(body.endsWith("</body>\n</html>"));
